@@ -1,0 +1,84 @@
+.container{
+  
+  margin: 10px;
+  margin-left:  20px;
+  width:  1130px;
+  background: #fff;
+  line-height: 1.3em;
+}
+
+.tooltip {
+  top: -1000px;
+  position: fixed;
+  padding: 10px;
+  background: rgba(255, 255, 255, .90);
+  border: 1px solid lightgray;
+  pointer-events: none;
+}
+.tooltip-hidden{
+  opacity: 0;
+  transition: all .3s;
+  transition-delay: .1s;
+}
+
+@media (max-width: 590px){
+  div.tooltip{
+    bottom: -1px;
+    width: calc(100%);
+    left: -1px !important;
+    right: -1px !important;
+    top: auto !important;
+    width: auto !important;
+  }
+}
+
+svg{
+  overflow: visible;
+}
+
+.domain{
+  display: none;
+}
+
+.axis{
+  opacity:  .7;
+}
+
+text{
+  /*pointer-events: none;*/
+  text-shadow: 0 1.5px 0 #fff, 1.5px 0 0 #fff, 0 -1.5px 0 #fff, -1.5px 0 0 #fff;
+}
+
+
+
+
+p{
+  max-width: 650px;
+}
+
+
+
+.input, .output{
+  display: inline-block;
+  padding: 10px;
+  font-family: menlo, Consolas, 'Lucida Console', monospace; 
+  position: relative;
+  vertical-align: top;
+  font-size: 12px;
+}
+.input{
+  background:  #eee;
+}
+
+
+h3{
+  /*padding-left: 10px;*/
+  padding-top: 0;
+  margin-top:  0;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.output .active .token{
+  outline: 1px solid #000;
+}
