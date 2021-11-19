@@ -1,6 +1,6 @@
 How can we visualize saliency across an entire paragraph?
 
-This [notebook]() has rifts on [ecco](https://github.com/jalammar/ecco) visualizations, using gpt2 and gradient x input saliency. 
+This notebook has rifts on [ecco](https://github.com/jalammar/ecco) visualizations, using gpt2 and gradient x input saliency. 
 
 ## Develop 
 
