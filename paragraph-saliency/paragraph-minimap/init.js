@@ -32,15 +32,15 @@ var sel = d3.select('.container').html('')
   .st({background: '#fff'})
 
 var inputSel = sel.append('div.input')
-  .append('h3').text('Input')
-  .parent()
+  // .append('h3').text('Input')
+  // .parent()
   .append('div')
   .st({width: inputWidth})
 
 var outputSel = sel.append('div.output')
   .st({width: '100%'})
-  .append('h3').text('Ouput')
-  .parent()
+  // .append('h3').text('Ouput')
+  // .parent()
   .append('div')
   // .st({width: inputWidth})
 
@@ -56,10 +56,10 @@ var iTokensSel = inputSel.appendMany('span.token', iTokens)
 var inputHeight = inputSel.node().offsetHeight
 
 var attributionToVal = d => 1 - 40*d
-var colorScale = d => isFinite(d) ? d3.interpolatePlasma(d) : '#eee'
+var colorScale = d => isFinite(d) ? d3.interpolateBlues(1-d) : '#eee'
 
-var r = 6
-var outputTokenMargin = 6
+var r = 2
+var outputTokenMargin = 1
 var outputWidth = outputSel.parent().node().offsetWidth
 
 var outputCols = Math.floor(outputWidth/(inputWidth/r + outputTokenMargin))

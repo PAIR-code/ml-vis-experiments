@@ -45,7 +45,7 @@ limitations under the License.
         }
       })
 
-      if (python_settings.isDev) setTimeout(check, 100)
+      if (python_settings.isDev) setTimeout(check, 50)
     }
     check()
   }
