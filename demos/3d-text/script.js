@@ -83,14 +83,69 @@ window.util = (function(){
 
 
 
-
+var str = `
+@   @        @  @          @   @   @          @     @
+@   @        @  @          @  @ @  @          @     @
+@   @   @@   @  @   @@      @ @ @ @   @@   @@ @   @@@
+@@@@@  @  @  @  @  @  @     @ @ @ @  @  @  @  @  @  @
+@   @  @@@@  @  @  @  @     @ @ @ @  @  @  @  @  @  @
+@   @  @     @  @  @  @     @ @ @ @  @  @  @  @  @  @
+@   @   @@@  @  @   @@       @   @    @@   @  @   @@@
+`.trim()
 
 
 
 async function main(){
-  var data = await util.getFile('hello.npy')
+  var helloData = await util.getFile('hello.npy')
+  var particles = await util.getFile('particles.npy', {str})
+  // console.log(particles)
 
-  console.log(data)
+  var size = 800
+
+  var scene = new THREE.Scene()
+  var camera = new THREE.PerspectiveCamera(45, size / size, 1, 23500)
+
+  camera.position.x = -300
+  camera.position.y = -100
+  camera.position.z = 1050
+  camera.zoom = 1
+  camera.updateProjectionMatrix()
+
+  var renderer = new THREE.WebGLRenderer()
+
+  var chartNode = d3.select('.chart').html('')
+    .st({width: size, height: size})
+    .node()
+  renderer.setSize(size, size)
+  chartNode.appendChild(renderer.domElement)
+
+  new THREE.OrbitControls(camera, renderer.domElement)
+  d3.timer(() => renderer.render(scene, camera))
+
+  var positions = []
+  var colors = []
+
+  for (var i = 0; i < particles.shape[0]; i++){
+    positions.push(particles.data[i*3 + 0], particles.data[i*3 + 1], particles.data[i*3 + 2])
+    colors.push(255, 255, 255)
+  }
+
+  console.log(positions, particles.shape)
+
+  var geometry = new THREE.BufferGeometry()
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3))
+
+  var material = new THREE.PointsMaterial({
+    size: 1,
+    vertexColors: THREE.VertexColors
+  })
+
+  scene.add(new THREE.Points(geometry, material))
+
+
+
+
 
 }
 main()
