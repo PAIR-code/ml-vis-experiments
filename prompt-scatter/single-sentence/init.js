@@ -19,20 +19,6 @@ console.clear()
 window.init = async function(){
   util.vocab = await util.getFile('vocab.json')
 
-  // var helloData = await util.getFile('hello.npy')
-
-  // var tokens = await util.getFile('tokenize.json', ['Hello, I am Adam'])
-  // console.log(tokens)
-  // var decoded = tokens[0].map(i => vocab[i].replace('Ġ', ' '))
-  // console.log(decoded)
-
-  // async function calcLogits(str){
-  //   var rawTokens = await util.getFile('tokenize.json', [str])
-  //   var tokens = rawTokens[0].map((d, i) => ({i, str: util.decodeToken(d)}))
-
-  //   return {tokens}
-  // }
-
   // gpt-neo examples
   var generated_str_a = `- People who complain about being lactose intolerant are making it up.\n- Kobe Bryant was one of the most overrated athletes in history.\n- The bombings of Hiroshima and Nagasaki were necessary acts to end WWII.\n- What the hell happened to Occupy Wall Street? They\'re working for JP Morgan as new diversity hires now\n- If you take a test and can pass the test, you\'re not allowed to have any children\n- "Killer bees," you ignorant asshole!`
   var generated_str_b = `- People who complain about being lactose intolerant are making it up.\n- The bombings of Hiroshima and Nagasaki were necessary acts to end WWII.\n- What the hell happened to Occupy Wall Street? They\'re working for JP Morgan as new diversity hires now\n- If you take a test and can pass the test, you\'re not allowed to have any children\n- "Killer bees," you ignorant asshole!`  
@@ -43,7 +29,6 @@ window.init = async function(){
 
   console.log(pairTokens)
   console.log(pairLogits)
-  console.log('hi')
 }
 
 init()
