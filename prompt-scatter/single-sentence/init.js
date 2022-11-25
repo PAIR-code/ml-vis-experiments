@@ -36,30 +36,3 @@ init()
 
 
   
-
-
-// TODO: auto add clientside code from 1wheel/hot-server 
-function initReloadInit(){
-  if (window.__isInitReload) return 
-  window.__isInitReload = true
-
-  new WebSocket('wss://hot-server-local:3989').onmessage = msg => {
-    var {path, type, str} = JSON.parse(msg.data)
-
-    if (type == 'reload'){
-      location.reload()
-    } else if (type == 'jsInject'){
-      console.clear() // enable with --consoleclear
-      // Function is faster than eval but adds two extra lines at start of file
-      Function(str)()
-      if (window.__onHotServer) window.__onHotServer({path, type, str})
-    } else if (type == 'cssInject') {
-      Array.from(document.querySelectorAll('link'))
-        .filter(d => d.href.includes(path.split('/').slice(-1)[0]))
-        .forEach(d => d.href = d.href.split('?')[0] + '?' + Math.random())
-    }
-  }
-}
-if (!window.__isInitReload) initReloadInit()
-
-
