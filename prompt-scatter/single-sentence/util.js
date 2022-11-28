@@ -41,7 +41,26 @@ window.util = (function(){
     return util.vocab[d].replace('Ġ', ' ').replace('Ċ', '\n')
   }
 
-  return {getFile, decodeToken}
+  function getTokenLogits({data, shape}, sentIndex, tokenIndex){
+    var i = sentIndex*shape[1]*shape[2] + tokenIndex*shape[2]
+
+    return data.slice(i, i + shape[2])
+  }
+
+  function calcTopTokens(logits, m){
+    var top = d3.range(m).map(d => ({v: -Infinity}))
+    for (var i = 0; i < logits.length - 1; i++){
+      if (top[m - 1].v > logits[i]) continue
+
+      top.push({i, v: logits[i]})
+      top = _.sortBy(top, d => -d.v)
+      top.pop()
+    }
+
+    return top
+  }
+
+  return {getFile, decodeToken, getTokenLogits, calcTopTokens}
 
 })()
 
