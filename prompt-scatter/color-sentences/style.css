@@ -35,7 +35,15 @@ svg{
 
 
 
-.chart{
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+.token{
+  display: inline-block;
+  padding: 0px 1px;
+  margin: 2px 2px;
+  background: #eee;
+  font-size: 12px;
+/*  min-width: 20px;*/
+}
+
+.sentence{
+  margin-top: 10px;
 }
