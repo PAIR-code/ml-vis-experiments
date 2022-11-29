@@ -82,7 +82,9 @@ window.util = (function(){
     return top
   }
 
-  return {getFile, decodeToken, getTokenLogits, calcTopTokens}
+  var color = d3.interpolatePuOr
+
+  return {getFile, decodeToken, getTokenLogits, calcTopTokens, color}
 
 })()
 

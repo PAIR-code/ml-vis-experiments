@@ -16,36 +16,39 @@ limitations under the License.
 
 window.init = async function(){
   console.clear()
-  console.log(Math.random())
-
   util.vocab = await util.getFile('vocab.json')
-  console.log(util.vocab)
-
   window.sentences = await util.getFile('output_mtokens.json')
-  console.log(sentences)
 
-  var sel = d3.select('.chart').html('')
-  var tokenSel = sel.appendMany('div.sentence', sentences)
+  var sel = d3.select('.chart').html(`
+    <div class='scatter'></div>
+    <div class='sentences'></div>
+  `)
+  var tokenSel = sel.select('.sentences').appendMany('div.sentence', sentences)
 
   tokenSel.each(drawSentence)
+
+  console.log(sentences[0])
+  drawTokenScatter(sentences[0].firstSentence[4])
 }
 
 window.drawSentence = function(sentence){
   var sel = d3.select(this)
 
-  sentence = sentence.slice(3)
   var firstSentence = []
-  sentence.some(d => {
+  sentence.slice(3).some(d => {
     if (d.str == '\n') return true
     firstSentence.push(d)
   })
+  sentence.firstSentence = firstSentence
 
   firstSentence.forEach(d => {
     d.actual = _.find(d.topTokens, {t: d.t0})
     d.p0p1 = d.actual.p0/(d.actual.p0 + d.actual.p1)
     // d.p0p1 = (d.actual.p0 - d.actual.p1)/.8 + .5
-    // d.p0p1 = (d.actual.l0 - d.actual.l1)/20 + .5
+    // d.p0p1 = (d.actual.l0 - d.actual.l1)/10 + .5
     // d.p0p1 = d.actual.l0/(d.actual.l0 + d.actual.l1)
+
+    d.actual.isActual = true
 
   })
 
@@ -56,10 +59,27 @@ window.drawSentence = function(sentence){
       background: d => d3.interpolatePuOr(d.p0p1),
       color: d => .2 < d.p0p1 && d.p0p1 < 1 - .2 ? '#000' : '#fff',
     })
+    .on('mouseover', d => {
+      drawTokenScatter(d)
+    })
     // interpolatePuOr
 
 
+
+
 }
+
+
+
+window.drawTokenScatter = function(mToken){
+  d3.selectAll('div.token').classed('active', d => d == mToken)
+  mToken.label0 = 'Kobe'
+  mToken.label1 = 'No Kobe'
+  mToken.count = 1000
+
+  window.initPair(mToken, d3.select('.scatter').html(''))
+}
+
 
 
 init()

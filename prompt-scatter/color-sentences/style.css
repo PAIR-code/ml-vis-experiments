@@ -41,9 +41,56 @@ svg{
   margin: 2px 2px;
   background: #eee;
   font-size: 12px;
+  cursor: default;
 /*  min-width: 20px;*/
+}
+div.token.active{
+  outline: 1px solid #f0f;
 }
 
 .sentence{
   margin-top: 10px;
+}
+
+
+.chart{
+  display: grid;
+  grid-template-columns: 500px 1fr;
+  gap: 30px;
+  position: relative;
+}
+.rendered_html{
+  height: 800px;
+}
+.scatter{
+  background: #000;
+  height: 500px;
+  position: sticky;
+  top: 0px;
+}
+
+.scatter .tick{
+  display: none;
+}
+
+.scatter path{
+  stroke: #555;
+}
+
+
+.active path{
+  stroke:  #f0f;
+  /*stroke-width:  2;*/
+  opacity:  1;
+}
+.active text{
+  fill: #f0f;
+  opacity: 1 !important;
+  font-size: 14px;
+}
+
+
+text.tiny{
+  font-size: 10px;
+  font-family: monospace;
 }
