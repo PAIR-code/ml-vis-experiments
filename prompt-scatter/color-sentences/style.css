@@ -1,7 +1,18 @@
+.output_wrapper, .output {
+    height: auto !important;
+    max-height:600px; 
+}
+.output_scroll {
+    box-shadow:none !important;
+    webkit-box-shadow:none !important;
+}
+
+
 body{
   font-family: menlo, Consolas, 'Lucida Console', monospace; 
   margin: 0px;
   background: #fff;
+  max-height:600px; 
 }
 
 .tooltip {

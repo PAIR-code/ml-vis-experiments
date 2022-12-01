@@ -13,11 +13,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-
 window.init = async function(){
   console.clear()
-  util.vocab = await util.getFile('vocab.json')
-  window.sentences = await util.getFile('output_mtokens.json')
+  util.vocab = python_settings.vocab_array || await util.getFile('vocab.json')
+  window.sentences = python_settings.outputs_mTokens || await util.getFile('output_mtokens.json')
 
   var sel = d3.select('.chart').html(`
     <div class='scatter'></div>
@@ -27,7 +26,7 @@ window.init = async function(){
 
   tokenSel.each(drawSentence)
 
-  console.log(sentences[0])
+  // console.log(sentences[0])
   drawTokenScatter(sentences[0].firstSentence[4])
 }
 
