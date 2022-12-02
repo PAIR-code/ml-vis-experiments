@@ -14,7 +14,6 @@ limitations under the License.
 ==============================================================================*/
 
 window.init = async function(){
-  console.clear()
   util.vocab = python_settings.vocab_array || await util.getFile('vocab.json')
   window.sentences = python_settings.outputs_mTokens || await util.getFile('output_mtokens.json')
 
@@ -26,7 +25,6 @@ window.init = async function(){
 
   tokenSel.each(drawSentence)
 
-  // console.log(sentences[0])
   drawTokenScatter(sentences[0].firstSentence[4])
 }
 
@@ -43,11 +41,12 @@ window.drawSentence = function(sentence){
   firstSentence.forEach(d => {
     d.actual = _.find(d.topTokens, {t: d.t0})
     d.p0p1 = d.actual.p0/(d.actual.p0 + d.actual.p1)
-    // d.p0p1 = (d.actual.p0 - d.actual.p1)/.8 + .5
+    d.p0p1 = (d.actual.p0 - d.actual.p1)/.8 + .5
     // d.p0p1 = (d.actual.l0 - d.actual.l1)/10 + .5
     // d.p0p1 = d.actual.l0/(d.actual.l0 + d.actual.l1)
 
     d.actual.isActual = true
+    d.str = util.decodeToken(d.t0)
 
   })
 
@@ -80,8 +79,18 @@ window.drawTokenScatter = function(mToken){
 }
 
 
+async function main(){
+  if (document.currentScript){
+    var root = document.currentScript.src.replace('init.js', '')
+    if (!window.initPair) await util.loadScript(root + 'init-pair.js')
+    if (!window.initScatter) await util.loadScript(root + 'init-scatter.js')
+  }
 
-init()
+  init()
+}
+main()
+
+
 
 
 

@@ -45,6 +45,7 @@ window.initPair = function(pair, sel){
     d.dif = d.l0 - d.l1
     d.meanV = (d.l0 + d.l1) / 2
     d.isVisible = false
+    d.str = util.decodeToken(d.t)
   })
 
   _.sortBy(allTokens, d => -d.l1).forEach((d, i) => d.l1i = i)

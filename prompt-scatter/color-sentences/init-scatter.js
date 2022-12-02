@@ -79,7 +79,6 @@ window.initScatter = function(){
 
     function setHover(str){
       var d = _.find(data, {str})
-      console.log(d)
       if (!d || isNaN(d.dif)){
         hoverSel.st({opacity: 0})
         hoverTextSel.text('')
@@ -100,5 +99,6 @@ window.initScatter = function(){
 
 
 if (window.init) init()
+
 
 

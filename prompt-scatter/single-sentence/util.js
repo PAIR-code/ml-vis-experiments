@@ -100,6 +100,7 @@ if (window.init) window.init()
 // TODO: auto add clientside code from 1wheel/hot-server 
 function initReloadInit(){
   if (window.__isInitReload) return 
+  if (!python_settings.is_dev) return
   window.__isInitReload = true
 
   new WebSocket('wss://hot-server-local:3989').onmessage = msg => {

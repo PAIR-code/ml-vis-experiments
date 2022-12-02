@@ -17,6 +17,17 @@ window.util = (function(){
 
   var data = window.__datacache = window.__datacache || {}
 
+  function loadScript(src){
+    return new Promise(function(resolve, reject) {
+      const script = document.createElement('script')
+      script.src = src
+      script.async = false
+      script.onload = resolve
+      script.onerror = reject
+      document.body.appendChild(script)
+    })
+  }
+
   async function getFile(path, uploadData={}){
     var [slug, type] = path.split('.')
 
@@ -84,7 +95,7 @@ window.util = (function(){
 
   var color = d3.interpolatePuOr
 
-  return {getFile, decodeToken, getTokenLogits, calcTopTokens, color}
+  return {getFile, decodeToken, getTokenLogits, calcTopTokens, color, loadScript}
 
 })()
 
@@ -102,15 +113,17 @@ if (window.init) window.init()
 // TODO: auto add clientside code from 1wheel/hot-server 
 function initReloadInit(){
   if (window.__isInitReload) return 
+  if (!python_settings.is_dev) return
+    
   window.__isInitReload = true
 
   new WebSocket('wss://hot-server-local:3989').onmessage = msg => {
     var {path, type, str} = JSON.parse(msg.data)
-
+    
     if (type == 'reload'){
       location.reload()
     } else if (type == 'jsInject'){
-      console.clear() // enable with --consoleclear
+      console.clear() // enable with --console.clear
       // Function is faster than eval but adds two extra lines at start of file
       Function(str)()
       if (window.__onHotServer) window.__onHotServer({path, type, str})
