@@ -41,7 +41,7 @@ window.drawSentence = function(sentence){
   firstSentence.forEach(d => {
     d.actual = _.find(d.topTokens, {t: d.t0})
     d.p0p1 = d.actual.p0/(d.actual.p0 + d.actual.p1)
-    d.p0p1 = (d.actual.p0 - d.actual.p1)/.8 + .5
+    // d.p0p1 = (d.actual.p0 - d.actual.p1)/.8 + .5
     // d.p0p1 = (d.actual.l0 - d.actual.l1)/10 + .5
     // d.p0p1 = d.actual.l0/(d.actual.l0 + d.actual.l1)
 
