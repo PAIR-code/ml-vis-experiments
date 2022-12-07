@@ -1,0 +1,129 @@
+.output_wrapper, .output {
+    height: auto !important;
+    max-height:600px; 
+}
+.output_scroll {
+    box-shadow:none !important;
+    webkit-box-shadow:none !important;
+}
+
+
+body{
+  font-family: menlo, Consolas, 'Lucida Console', monospace; 
+  margin: 0px;
+  background: #fff;
+  max-height:600px; 
+}
+
+.tooltip {
+  top: -1000px;
+  position: fixed;
+  padding: 10px;
+  background: rgba(0, 0, 0, .9);
+  border: 1px solid lightgray;
+  pointer-events: none;
+}
+.tooltip-hidden{
+  opacity: 0;
+  transition: all .3s;
+  transition-delay: .1s;
+}
+
+@media (max-width: 590px){
+  div.tooltip{
+    bottom: -1px;
+    width: calc(100%);
+    left: -1px !important;
+    right: -1px !important;
+    top: auto !important;
+    width: auto !important;
+  }
+}
+
+svg{
+  overflow: visible;
+}
+
+
+.sentence{
+  margin-bottom: 4px;
+}
+.token{
+  display: inline-block;
+  padding: 0px 1px;
+  margin: 0px 2px;
+  background: #eee;
+  font-size: 12px;
+  cursor: default;
+/*  line-height: 1em;*/
+/*  min-width: 20px;*/
+}
+div.token.active{
+  outline: 1px solid #f0f;
+}
+
+.right-col{
+  margin-top: 10px;
+}
+
+
+.chart{
+  display: grid;
+  grid-template-columns: 500px 1fr;
+  gap: 30px;
+  position: relative;
+}
+.rendered_html{
+  height: 800px;
+}
+.scatter{
+  background: #000;
+  height: 500px;
+  position: sticky;
+  top: 0px;
+}
+
+.scatter .tick{
+  display: none;
+}
+
+.scatter path, .corr-scatter path{
+  stroke: #555;
+  stroke-width: .5;
+}
+
+
+.active path{
+  stroke:  #f0f;
+  /*stroke-width:  2;*/
+  opacity:  1;
+}
+.active text{
+  fill: #f0f;
+  opacity: 1 !important;
+  font-size: 14px;
+}
+
+
+circle.token{
+  stroke: #333;
+  stroke-width: .5px;
+}
+
+circle.active-sentence.token{
+  stroke-width: 2px;
+  stroke: #f0f;
+  stroke-dasharray: 1px 1px;
+}
+
+circle.active.token{
+  stroke-width: 3px;
+  stroke: #f0f;
+  stroke-dasharray: 20px;
+
+}
+
+text.tiny{
+  font-size: 10px;
+  font-family: monospace;
+}
