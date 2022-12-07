@@ -13,17 +13,52 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+window.state = window.state || {
+  lockedToken: null,
+}
+
 window.init = async function(){
   util.vocab = python_settings.vocab_array || await util.getFile('vocab.json')
   window.sentences = python_settings.outputs_mTokens || await util.getFile('output_mtokens.json')
+  window.tokens = []
+  sentences.forEach(sentence => {
+    sentence.firstSentence = []
+    sentence.slice(3).some(d => {
+      if (d.str == '\n') return true
+      sentence.firstSentence.push(d)
+    })
+
+    sentence.firstSentence.forEach(d => {
+      d.actual = _.find(d.topTokens, {t: d.t0})
+      d.p0p1 = d.actual.p0/(d.actual.p0 + d.actual.p1)
+      // d.p0p1 = (d.actual.p0 - d.actual.p1)/.8 + .5
+      // d.p0p1 = (d.actual.l0 - d.actual.l1)/10 + .5
+      // d.p0p1 = d.actual.l0/(d.actual.l0 + d.actual.l1)
+
+      d.actual.isActual = true
+      d.str = util.decodeToken(d.t0)
+      d.textColor = d3.interpolatePuOr(d.p0p1)
+    })
+
+    sentence.firstSentence.forEach((d, i) => {
+      d.sentence = sentence
+      d.sentenceIndex = i + 1
+      tokens.push(d)
+    })
+  })
 
   var sel = d3.select('.chart').html(`
     <div class='scatter'></div>
-    <div class='sentences'></div>
+    <div class='right-col'></div>
   `)
-  var tokenSel = sel.select('.sentences').appendMany('div.sentence', sentences)
+  var rightColSel = sel.select('.right-col')
+    .on('mouseleave', () => state.lockedToken = null)
+  
+  rightColSel
+    .appendMany('div.sentence', sentences)
+    .each(drawSentence)
 
-  tokenSel.each(drawSentence)
+  drawIndexCorrScatter(rightColSel.append('div'), tokens)
 
   drawTokenScatter(sentences[0].firstSentence[4])
 }
@@ -31,40 +66,33 @@ window.init = async function(){
 window.drawSentence = function(sentence){
   var sel = d3.select(this)
 
-  var firstSentence = []
-  sentence.slice(3).some(d => {
-    if (d.str == '\n') return true
-    firstSentence.push(d)
-  })
-  sentence.firstSentence = firstSentence
-
-  firstSentence.forEach(d => {
-    d.actual = _.find(d.topTokens, {t: d.t0})
-    d.p0p1 = d.actual.p0/(d.actual.p0 + d.actual.p1)
-    // d.p0p1 = (d.actual.p0 - d.actual.p1)/.8 + .5
-    // d.p0p1 = (d.actual.l0 - d.actual.l1)/10 + .5
-    // d.p0p1 = d.actual.l0/(d.actual.l0 + d.actual.l1)
-
-    d.actual.isActual = true
-    d.str = util.decodeToken(d.t0)
-
-  })
-
-  var tokenSel = sel.appendMany('div.token', firstSentence)
+  sel.appendMany('div.token', sentence.firstSentence)
     .html(d => JSON.stringify(d.str).replaceAll('"', ''))
-    .on('click', d => console.log(d))
+    .on('click', d => {
+      console.log(d)
+      drawTokenScatter(d)
+      state.lockedToken = d == state.lockedToken ? null : d
+    })
     .st({
-      background: d => d3.interpolatePuOr(d.p0p1),
+      background: d => d.textColor,
       color: d => .2 < d.p0p1 && d.p0p1 < 1 - .2 ? '#000' : '#fff',
     })
     .on('mouseover', d => {
+      if (state.lockedToken) return
       drawTokenScatter(d)
     })
-    // interpolatePuOr
+}
 
 
+window.drawIndexCorrScatter = function(sel, tokens){
+  var c = d3.conventions({
+    sel: sel,
+    width: 300,
+    height: 300,
+  })
 
-
+  c.x.domain([0, d3.max(tokens, d => d.sentenceIndex)])
+  c.y.domain
 }
 
 
@@ -81,7 +109,7 @@ window.drawTokenScatter = function(mToken){
 
 async function main(){
   if (document.currentScript){
-    var root = document.currentScript.src.replace('init.js', '')
+    var root = document.currentScript.src.replace('init.js', '').split('?')[0]
     if (!window.initPair) await util.loadScript(root + 'init-pair.js')
     if (!window.initScatter) await util.loadScript(root + 'init-scatter.js')
   }
