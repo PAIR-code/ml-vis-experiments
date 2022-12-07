@@ -28,21 +28,22 @@ window.init = async function(){
       sentence.firstSentence.push(d)
     })
 
-    sentence.firstSentence.forEach(d => {
+    sentence.firstSentence.forEach((d, i) => {
       d.actual = _.find(d.topTokens, {t: d.t0})
       d.p0p1 = d.actual.p0/(d.actual.p0 + d.actual.p1)
       // d.p0p1 = (d.actual.p0 - d.actual.p1)/.8 + .5
       // d.p0p1 = (d.actual.l0 - d.actual.l1)/10 + .5
       // d.p0p1 = d.actual.l0/(d.actual.l0 + d.actual.l1)
+      d.textColor = d3.interpolatePuOr(d.p0p1)
 
       d.actual.isActual = true
       d.str = util.decodeToken(d.t0)
-      d.textColor = d3.interpolatePuOr(d.p0p1)
-    })
-
-    sentence.firstSentence.forEach((d, i) => {
       d.sentence = sentence
       d.sentenceIndex = i + 1
+      d.correlation = ss.sampleRankCorrelation(
+        d.topTokens.map(tt => tt.l0), 
+        d.topTokens.map(tt => tt.l1))
+
       tokens.push(d)
     })
   })
@@ -60,6 +61,17 @@ window.init = async function(){
 
   drawIndexCorrScatter(rightColSel.append('div'), tokens)
 
+  sel.selectAll('.token')
+    .on('click', d => {
+      console.log(d)
+      drawTokenScatter(d)
+      state.lockedToken = d == state.lockedToken ? null : d
+    })
+    .on('mouseover', d => {
+      if (state.lockedToken) return
+      drawTokenScatter(d)
+    })
+
   drawTokenScatter(sentences[0].firstSentence[4])
 }
 
@@ -68,39 +80,43 @@ window.drawSentence = function(sentence){
 
   sel.appendMany('div.token', sentence.firstSentence)
     .html(d => JSON.stringify(d.str).replaceAll('"', ''))
-    .on('click', d => {
-      console.log(d)
-      drawTokenScatter(d)
-      state.lockedToken = d == state.lockedToken ? null : d
-    })
     .st({
       background: d => d.textColor,
       color: d => .2 < d.p0p1 && d.p0p1 < 1 - .2 ? '#000' : '#fff',
-    })
-    .on('mouseover', d => {
-      if (state.lockedToken) return
-      drawTokenScatter(d)
     })
 }
 
 
 window.drawIndexCorrScatter = function(sel, tokens){
   var c = d3.conventions({
-    sel: sel,
-    width: 300,
-    height: 300,
+    sel: sel.classed('corr-scatter', 1),
+    // width: 300,
+    height: 400,
+    margin: {left: 40, bottom: 40},
   })
 
   c.x.domain([0, d3.max(tokens, d => d.sentenceIndex)])
-  c.y.domain
+  c.y.domain([0, 1])
+
+  c.xAxis//.ticks(5)
+  c.yAxis.ticks(4)
+  d3.drawAxis(c)
+  util.addAxisLabel(c, 'Index in Sentence', 'Logit Correlation')
+  util.ggPlot(c)
+
+  c.svg.appendMany('circle.token', tokens)
+    .translate(d => [c.x(d.sentenceIndex - Math.random()/3), c.y(d.correlation)])
+    .at({r: 3, fill: d => d.textColor})
 }
 
 
 
 window.drawTokenScatter = function(mToken){
-  d3.selectAll('div.token').classed('active', d => d == mToken)
-  mToken.label0 = 'Kobe'
-  mToken.label1 = 'No Kobe'
+  d3.selectAll('.token').classed('active', d => d == mToken)
+  d3.selectAll('.token').classed('active-sentence', d => d.sentence == mToken.sentence)
+
+  mToken.label0 = 'Token Logits With Kobe'
+  mToken.label1 = 'Token Logits Without Kobe'
   mToken.count = 1000
 
   window.initPair(mToken, d3.select('.scatter').html(''))
@@ -109,9 +125,9 @@ window.drawTokenScatter = function(mToken){
 
 async function main(){
   if (document.currentScript){
-    var root = document.currentScript.src.replace('init.js', '').split('?')[0]
-    if (!window.initPair) await util.loadScript(root + 'init-pair.js')
-    if (!window.initScatter) await util.loadScript(root + 'init-scatter.js')
+    util.root = document.currentScript.src.replace('init.js', '').split('?')[0]
+    if (!window.initScatter) await util.loadScript(util.root + 'init-scatter.js')
+    if (!window.initPair) await util.loadScript(util.root + 'init-pair.js')
   }
 
   init()

@@ -45,14 +45,17 @@ svg{
 }
 
 
-
+.sentence{
+  margin-bottom: 4px;
+}
 .token{
   display: inline-block;
   padding: 0px 1px;
-  margin: 2px 2px;
+  margin: 0px 2px;
   background: #eee;
   font-size: 12px;
   cursor: default;
+/*  line-height: 1em;*/
 /*  min-width: 20px;*/
 }
 div.token.active{
@@ -84,8 +87,9 @@ div.token.active{
   display: none;
 }
 
-.scatter path{
+.scatter path, .corr-scatter path{
   stroke: #555;
+  stroke-width: .5;
 }
 
 
@@ -100,6 +104,24 @@ div.token.active{
   font-size: 14px;
 }
 
+
+circle.token{
+  stroke: #333;
+  stroke-width: .5px;
+}
+
+circle.active-sentence.token{
+  stroke-width: 2px;
+  stroke: #f0f;
+  stroke-dasharray: 1px 1px;
+}
+
+circle.active.token{
+  stroke-width: 3px;
+  stroke: #f0f;
+  stroke-dasharray: 20px;
+
+}
 
 text.tiny{
   font-size: 10px;
