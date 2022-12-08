@@ -93,6 +93,22 @@ window.util = (function(){
     return top
   }
 
+
+  function mTokensFormat(mTokens){
+    mTokens.forEach((d, i) => {
+      d.actual = _.find(d.topTokens, {t: d.t0})
+      d.p0p1 = d.actual.p0/(d.actual.p0 + d.actual.p1)
+      d.textColor = d3.interpolatePuOr(d.p0p1)
+
+      d.actual.isActual = true
+      d.str = util.decodeToken(d.t0)
+      d.sentenceIndex = i + 1
+      d.correlation = ss.sampleRankCorrelation(
+        d.topTokens.map(tt => tt.l0), 
+        d.topTokens.map(tt => tt.l1))
+    })
+  }
+
   var color = d3.interpolatePuOr
 
 
@@ -125,7 +141,7 @@ window.util = (function(){
   }
 
 
-  return {getFile, decodeToken, getTokenLogits, calcTopTokens, color, loadScript, addAxisLabel, ggPlot}
+  return {getFile, decodeToken, getTokenLogits, calcTopTokens, mTokensFormat, color, loadScript, addAxisLabel, ggPlot, }
 
 })()
 

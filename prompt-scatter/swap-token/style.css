@@ -127,3 +127,8 @@ text.tiny{
   font-size: 10px;
   font-family: monospace;
 }
+
+
+button.loading{
+  opacity: .1;
+}
