@@ -46,7 +46,8 @@ svg{
 
 
 .sentence{
-  margin-bottom: 4px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .token{
   display: inline-block;
@@ -132,3 +133,4 @@ text.tiny{
 button.loading{
   opacity: .1;
 }
+
