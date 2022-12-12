@@ -169,9 +169,10 @@ window.render = function(){
 
   d3.select('.right-col').st({opacity: state.swapToken ? 1 : 0})
 
-  if (state.swapToken && state.scatterToken){
-    state.scatterToken.label0 = 'Token Logits'
-    state.scatterToken.label1 = 'Token Logits'
+  if (state.swapToken && state.scatterToken && state.candidateSwapToken){
+    console.log(state.swapToken)
+    state.scatterToken.label0 = util.decodeToken(state.candidateSwapToken.t0) + ' Token Logits'
+    state.scatterToken.label1 = util.decodeToken(state.swapToken.t) + ' Token Logits'
     state.scatterToken.count = 1000
 
     window.initPair(state.scatterToken, d3.select('.scatter').html(''))
