@@ -63,6 +63,12 @@ div.token.active{
   outline: 1px solid #f0f;
 }
 
+div.active-swap.token{
+  outline: 2px solid orange;
+  color: orange !important;
+}
+
+
 .right-col{
   margin-top: 10px;
 }
@@ -105,7 +111,6 @@ div.token.active{
   font-size: 14px;
 }
 
-
 circle.token{
   stroke: #333;
   stroke-width: .5px;
@@ -134,3 +139,10 @@ button.loading{
   opacity: .1;
 }
 
+
+
+.block-alts div{
+  display: inline-block;
+  padding: 2px;
+  font-size: 11px;
+}
