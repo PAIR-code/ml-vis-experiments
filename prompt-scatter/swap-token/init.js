@@ -27,8 +27,6 @@ window.init = async function(){
   util.vocab = python_settings.vocab_array || await util.getFile('vocab.json')
 
 
-
-
   var sel = d3.select('.chart').html(`
     <div class='left-col'>
       <div class='input-area'></div>
@@ -46,11 +44,11 @@ window.init = async function(){
     .on('mouseleave', () => state.lockedRightToken = null)
 
   window.textArea = await initTextArea()
-
+  console.log(state)
   state.candidateSwapToken = state.mTokens[state.swapTokens?.l0i || 4]
-  console.log(state.candidateSwapToken)
   render()
 }
+
 
 
 window.initTextArea = async function(){
@@ -61,25 +59,34 @@ window.initTextArea = async function(){
     .st({width: 500, height: 200})
     .text(state.promptText)
 
-  var buttonSel = sel.append('button').text('Generate').on('click', mTokensFetch)
-  async function mTokensFetch(){
-    buttonSel.classed('loading', 1)
-    state.promptText = textAreaSel.node().value 
-    state.mTokens = await util.getFile(
-      'generate_mtokens.json', {prompt: state.promptText, n: 100})
-    buttonSel.classed('loading', 0)
-    textAreaSel.node().value = state.mTokens[0].generated_str_0
-
-    util.mTokensFormat(state.mTokens)
-    render()
-  }
+  var buttonSel = sel.append('button').text('Generate').on('click', window.mTokensFetch)
 
   await mTokensFetch()
+}
+
+window.mTokensFetch = async function(){
+  console.log('fetching....')
+  d3.select('.chart').classed('loading', 1)
+  var textAreaSel = d3.select('textarea')
+
+  state.promptText = textAreaSel.node().value 
+  var reqObject = {prompt: state.promptText, n: 100}
+  if (state.swapToken) reqObject.swapToken = state.swapToken
+  state.mTokens = await util.getFile('generate_mtokens.json', reqObject)
+
+  d3.select('.chart').classed('loading', 0)
+  textAreaSel.node().value = state.mTokens[0].generated_str_0
+
+  util.mTokensFormat(state.mTokens)
+  render()
 }
 
 
 
 window.drawSentenceLeft = function(){
+  if (drawSentenceLeft.__last == state.mTokens) return
+  drawSentenceLeft.__last = state.mTokens
+
   var tokenSel = d3.select('.left-col .sentence').html('')
     .appendMany('div.token', state.mTokens)
     .html(d => JSON.stringify(d.str).replaceAll('"', ''))
@@ -87,12 +94,11 @@ window.drawSentenceLeft = function(){
   tokenSel
     .on('click', d => {
       state.swapToken = null
-      console.log(d)
       state.candidateSwapToken = d
-      render()
       state.lockedLeftToken = d == state.lockedLeftToken ? null : d
+      render()
     })
-    .on('mouseover', d => {
+    .on('mouseenter', d => {
       if (state.swapToken) return
       if (state.lockedLeftToken) return
       state.candidateSwapToken = d
@@ -100,6 +106,9 @@ window.drawSentenceLeft = function(){
     })
 }
 window.drawSentenceRight = function(){
+  if (drawSentenceRight.__last == state.mTokens) return
+  drawSentenceRight.__last = state.mTokens
+
   var tokenSel = d3.select('.right-col .sentence').html('')
     .appendMany('div.token', state.mTokens)
     .html(d => JSON.stringify(d.str).replaceAll('"', ''))
@@ -116,7 +125,7 @@ window.drawSentenceRight = function(){
       render()
       state.lockedRightToken = d == state.lockedRightToken ? null : d
     })
-    .on('mouseover', d => {
+    .on('mouseenter', d => {
       if (state.lockedRightToken) return
       state.scatterToken = d
       render()
@@ -125,15 +134,18 @@ window.drawSentenceRight = function(){
 
 
 window.drawBlockAlts = function(){
-  console.log(state.candidateSwapToken)
   if (!state.candidateSwapToken) return
 
   var sel = d3.select('.left-col .block-alts').html('')
 
   var tokenSel = sel.appendMany('div', _.sortBy(state.candidateSwapToken.topTokens, d => -d.p0))
-    .on('click', d => {
+    .on('click', async d => {
+      d.i0 = state.candidateSwapToken.i0
+      d.i1 = state.candidateSwapToken.i1
+
       state.swapToken = d == state.swapToken ? null : d
-      render()
+
+      await mTokensFetch()
     })
   tokenSel.append('span').text(d => d3.format('.2%')(d.p0))
     .st({color: '#bbb'})
@@ -147,23 +159,22 @@ window.drawTokenScatter = function(mToken){
 window.render = function(){
   window.drawSentenceLeft()
   window.drawBlockAlts()
-
-
   window.drawSentenceRight()
 
-
-  d3.selectAll('.left-col .token')
-    .classed('candidate-swap-token', d => d == state.candidateSwapToken)
+  d3.selectAll('.left-col .sentence .token')
+    .classed('candidate-swap-token', d => d.i0 == state.candidateSwapToken?.i0)
 
   d3.selectAll('.block-alts div')
-    .classed('swap-token', d => d == state.swapToken)
+    .classed('swap-token', d => d.t == state.swapToken?c.t)
 
 
-  // mToken.label0 = 'Token Logits'
-  // mToken.label1 = 'Token Logits'
-  // mToken.count = 1000
+  if (state.swapToken && state.scatterToken){
+    state.scatterToken.label0 = 'Token Logits'
+    state.scatterToken.label1 = 'Token Logits'
+    state.scatterToken.count = 1000
 
-  // window.initPair(mToken, d3.select('.scatter').html(''))
+    window.initPair(state.scatterToken, d3.select('.scatter').html(''))
+  }
 }
 
 
