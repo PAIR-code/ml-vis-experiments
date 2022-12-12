@@ -14,9 +14,13 @@ limitations under the License.
 ==============================================================================*/
 
 window.state = window.state || {
-  lockedToken: null,
+  lockedRightToken: null,
+  lockedLeftToken: null,
   promptText: 'PHILADELPHIA — Former President Obama on Saturday issued a stark warning about threats to America, even as he acknowledged that many voters were consumed by a range of other urgent issues in the final stretch of the midterm campaign.',
-  promptText: 'Former President Bush issued a stark warning about threats to America, while acknowledging that many voters were consumed by a range of other urgent issues.'
+  promptText: 'Former President Bush issued a stark warning about threats to America, while acknowledging that many voters were consumed by a range of other urgent issues.',
+  swapToken: null,
+  candidateSwapToken: null,
+  scatterToken: null,
 }
 
 window.init = async function(){
@@ -26,19 +30,26 @@ window.init = async function(){
 
 
   var sel = d3.select('.chart').html(`
-    <div class='scatter'></div>
-    <div class='right-col'>
+    <div class='left-col'>
       <div class='input-area'></div>
       <div class='sentence'></div>
       <div class='block-alts'></div>
     </div>
+    <div class='right-col'>
+      <div class='sentence'></div>
+      <div class='scatter'></div>
+    </div>
   `)
+  var leftColSel = sel.select('.left-col')
+    .on('mouseleave', () => state.lockedLeftToken = null)
   var rightColSel = sel.select('.right-col')
-    .on('mouseleave', () => state.lockedToken = null)
+    .on('mouseleave', () => state.lockedRightToken = null)
 
   window.textArea = await initTextArea()
 
-  drawTokenScatter(state.mTokens[4])
+  state.candidateSwapToken = state.mTokens[state.swapTokens?.l0i || 4]
+  console.log(state.candidateSwapToken)
+  render()
 }
 
 
@@ -57,10 +68,10 @@ window.initTextArea = async function(){
     state.mTokens = await util.getFile(
       'generate_mtokens.json', {prompt: state.promptText, n: 100})
     buttonSel.classed('loading', 0)
-    textAreaSel.node().value = state.mTokens[0].generated_str
+    textAreaSel.node().value = state.mTokens[0].generated_str_0
 
     util.mTokensFormat(state.mTokens)
-    drawSentence(state.mTokens, 'singlePercentile')
+    render()
   }
 
   await mTokensFetch()
@@ -68,57 +79,91 @@ window.initTextArea = async function(){
 
 
 
-window.drawSentence = function(mTokens, colorType){
+window.drawSentenceLeft = function(){
+  var tokenSel = d3.select('.left-col .sentence').html('')
+    .appendMany('div.token', state.mTokens)
+    .html(d => JSON.stringify(d.str).replaceAll('"', ''))
+
+  tokenSel
+    .on('click', d => {
+      state.swapToken = null
+      console.log(d)
+      state.candidateSwapToken = d
+      render()
+      state.lockedLeftToken = d == state.lockedLeftToken ? null : d
+    })
+    .on('mouseover', d => {
+      if (state.swapToken) return
+      if (state.lockedLeftToken) return
+      state.candidateSwapToken = d
+      render()
+    })
+}
+window.drawSentenceRight = function(){
   var tokenSel = d3.select('.right-col .sentence').html('')
-    .appendMany('div.token', mTokens)
+    .appendMany('div.token', state.mTokens)
     .html(d => JSON.stringify(d.str).replaceAll('"', ''))
     .st({
       background: d => d.textColor,
       color: d => .2 < d.p0p1 && d.p0p1 < 1 - .2 ? '#000' : '#fff',
     })
 
-  if (colorType == 'singlePercentile'){
-    tokenSel.st({
-      background: d => d3.interpolateGreys(d.actual.p0),
-      color: d => d.actual.p0 > .6 ? '#fff' : '#000',
-    })
-  }
 
-
-  d3.selectAll('.token')
+  tokenSel
     .on('click', d => {
       console.log(d)
-      drawTokenScatter(d)
-      state.lockedToken = d == state.lockedToken ? null : d
+      state.scatterToken = d
+      render()
+      state.lockedRightToken = d == state.lockedRightToken ? null : d
     })
     .on('mouseover', d => {
-      if (state.lockedToken) return
-      drawTokenScatter(d)
+      if (state.lockedRightToken) return
+      state.scatterToken = d
+      render()
     })
 }
 
 
-window.drawBlockAlts = function(mToken){
-  var sel = d3.select('.right-col .block-alts').html('')
+window.drawBlockAlts = function(){
+  console.log(state.candidateSwapToken)
+  if (!state.candidateSwapToken) return
 
-  var tokenSel = sel.appendMany('div', _.sortBy(mToken.topTokens, d => -d.p0))
+  var sel = d3.select('.left-col .block-alts').html('')
+
+  var tokenSel = sel.appendMany('div', _.sortBy(state.candidateSwapToken.topTokens, d => -d.p0))
+    .on('click', d => {
+      state.swapToken = d == state.swapToken ? null : d
+      render()
+    })
   tokenSel.append('span').text(d => d3.format('.2%')(d.p0))
     .st({color: '#bbb'})
   tokenSel.append('span').text(d => ' ' + util.decodeToken(d.t))
-
 } 
 
 window.drawTokenScatter = function(mToken){
-  window.drawBlockAlts(mToken)
+}
 
 
-  mToken.label0 = 'Token Logits'
-  mToken.label1 = 'Token Logits'
-  mToken.count = 1000
+window.render = function(){
+  window.drawSentenceLeft()
+  window.drawBlockAlts()
 
-  window.initPair(mToken, d3.select('.scatter').html(''))
-  
-  d3.selectAll('.token').classed('active-swap', d => d == mToken)
+
+  window.drawSentenceRight()
+
+
+  d3.selectAll('.left-col .token')
+    .classed('candidate-swap-token', d => d == state.candidateSwapToken)
+
+  d3.selectAll('.block-alts div')
+    .classed('swap-token', d => d == state.swapToken)
+
+
+  // mToken.label0 = 'Token Logits'
+  // mToken.label1 = 'Token Logits'
+  // mToken.count = 1000
+
+  // window.initPair(mToken, d3.select('.scatter').html(''))
 }
 
 

@@ -63,20 +63,25 @@ div.token.active{
   outline: 1px solid #f0f;
 }
 
-div.active-swap.token{
+div.candidate-swap-token.token{
   outline: 2px solid orange;
   color: orange !important;
 }
 
+.block-alts div.swap-token{
+  outline: 2px solid purple;
+  color: purple !important;
+}
+
 
 .right-col{
-  margin-top: 10px;
+/*  margin-top: 10px;*/
 }
 
 
 .chart{
   display: grid;
-  grid-template-columns: 500px 1fr;
+  grid-template-columns: 500px 500px;
   gap: 30px;
   position: relative;
 }
@@ -145,4 +150,5 @@ button.loading{
   display: inline-block;
   padding: 2px;
   font-size: 11px;
+  cursor: pointer;
 }
