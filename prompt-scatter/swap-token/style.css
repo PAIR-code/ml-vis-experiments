@@ -60,7 +60,7 @@ svg{
 /*  min-width: 20px;*/
 }
 div.token.active{
-  outline: 1px solid #f0f;
+  outline: 2px solid #0f0;
 }
 
 div.candidate-swap-token.token{
@@ -106,12 +106,12 @@ div.candidate-swap-token.token{
 
 
 .active path{
-  stroke:  #f0f;
+  stroke:  #0f0;
   /*stroke-width:  2;*/
   opacity:  1;
 }
 .active text{
-  fill: #f0f;
+  fill: #0f0;
   opacity: 1 !important;
   font-size: 14px;
 }
@@ -123,13 +123,13 @@ circle.token{
 
 circle.active-sentence.token{
   stroke-width: 2px;
-  stroke: #f0f;
+  stroke: #0f0;
   stroke-dasharray: 1px 1px;
 }
 
 circle.active.token{
   stroke-width: 3px;
-  stroke: #f0f;
+  stroke: #0f0;
   stroke-dasharray: 20px;
 
 }

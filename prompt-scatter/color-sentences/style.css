@@ -15,6 +15,8 @@ body{
   max-height:600px; 
 }
 
+
+
 .tooltip {
   top: -1000px;
   position: fixed;
@@ -59,7 +61,7 @@ svg{
 /*  min-width: 20px;*/
 }
 div.token.active{
-  outline: 1px solid #f0f;
+  outline: 2px solid #0f0;
 }
 
 .right-col{
@@ -72,6 +74,9 @@ div.token.active{
   grid-template-columns: 500px 1fr;
   gap: 30px;
   position: relative;
+/*  max-height: 900px;*/
+/*  overflow-y: scroll;*/
+  padding-bottom: 200px;
 }
 .rendered_html{
   height: 800px;
@@ -80,7 +85,7 @@ div.token.active{
   background: #000;
   height: 500px;
   position: sticky;
-  top: 0px;
+  top: 30px;
 }
 
 .scatter .tick{
@@ -94,12 +99,12 @@ div.token.active{
 
 
 .active path{
-  stroke:  #f0f;
+  stroke:  #0f0;
   /*stroke-width:  2;*/
   opacity:  1;
 }
 .active text{
-  fill: #f0f;
+  fill: #0f0;
   opacity: 1 !important;
   font-size: 14px;
 }
@@ -112,13 +117,13 @@ circle.token{
 
 circle.active-sentence.token{
   stroke-width: 2px;
-  stroke: #f0f;
+  stroke: #0f0;
   stroke-dasharray: 1px 1px;
 }
 
 circle.active.token{
   stroke-width: 3px;
-  stroke: #f0f;
+  stroke: #0f0;
   stroke-dasharray: 20px;
 
 }

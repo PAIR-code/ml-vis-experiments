@@ -89,7 +89,7 @@ window.initPair = function(pair, sel){
     var scatterData = allTokens.map(d => {
       var x = c.x(d.l0)
       var y = c.y(d.l1)
-      var fill = d.isActual ? '#f0f' : color(d.dif)
+      var fill = d.isActual ? '#0f0' : color(d.dif)
       if (fill == 'rgb(0, 0, 0)') fill = '#fff'
       var dif = d.dif
       var str = d.str

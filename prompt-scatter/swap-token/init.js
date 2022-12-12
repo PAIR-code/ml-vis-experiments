@@ -165,8 +165,9 @@ window.render = function(){
     .classed('candidate-swap-token', d => d.i0 == state.candidateSwapToken?.i0)
 
   d3.selectAll('.block-alts div')
-    .classed('swap-token', d => d.t == state.swapToken?c.t)
+    .classed('swap-token', d => d.t == state.swapToken?.t)
 
+  d3.select('.right-col').st({opacity: state.swapToken ? 1 : 0})
 
   if (state.swapToken && state.scatterToken){
     state.scatterToken.label0 = 'Token Logits'
