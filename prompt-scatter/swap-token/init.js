@@ -17,7 +17,7 @@ window.state = window.state || {
   lockedRightToken: null,
   lockedLeftToken: null,
   promptText: 'PHILADELPHIA — Former President Obama on Saturday issued a stark warning about threats to America, even as he acknowledged that many voters were consumed by a range of other urgent issues in the final stretch of the midterm campaign.',
-  promptText: 'Former President Bush issued a stark warning about threats to America, while acknowledging that many voters were consumed by a range of other urgent issues.',
+  promptText: 'Former President Trump issued a stark warning about threats to America, while',
   swapToken: null,
   candidateSwapToken: null,
   scatterToken: null,

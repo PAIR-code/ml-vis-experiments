@@ -24,7 +24,7 @@ window.init = async function(){
   sentences.forEach(sentence => {
     sentence.firstSentence = []
     sentence.slice(3).some(d => {
-      if (d.str == '\n') return true
+      if (d.str == '\n' && sentence.firstSentence.length > 4) return true
       sentence.firstSentence.push(d)
     })
 
