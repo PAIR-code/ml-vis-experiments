@@ -167,6 +167,9 @@ window.render = function(){
   d3.selectAll('.block-alts div')
     .classed('swap-token', d => d.t == state.swapToken?.t)
 
+  d3.selectAll('.right-col .sentence .token')
+    .classed('active', d => d == state.scatterToken)
+
   d3.select('.right-col').st({opacity: state.swapToken ? 1 : 0})
 
   if (state.swapToken && state.scatterToken && state.candidateSwapToken){
@@ -185,11 +188,15 @@ async function main(){
     util.root = document.currentScript.src.replace('init.js', '').split('?')[0]
     if (!window.initScatter) await util.loadScript(util.root + 'init-scatter.js')
     if (!window.initPair) await util.loadScript(util.root + 'init-pair.js')
+    if (!window.initScatter) await util.loadScript(util.root + 'init-scatter.js')
+    if (!window.initPair) await util.loadScript(util.root + 'init-pair.js')
   }
 
   init()
 }
 main()
+
+
 
 
 
