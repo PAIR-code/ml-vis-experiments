@@ -78,6 +78,7 @@ window.initScatter = function(){
       })
 
     function setHover(str){
+      console.log(str)
       var d = _.find(data, {str})
       if (!d || isNaN(d.dif)){
         hoverSel.st({opacity: 0})

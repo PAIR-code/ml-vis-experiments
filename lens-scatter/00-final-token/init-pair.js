@@ -49,9 +49,9 @@ window.initPair = function(pair, sel){
 
   _.sortBy(allTokens, d => -d.l1).forEach((d, i) => d.l1i = i)
   _.sortBy(allTokens, d => -d.l0).forEach((d, i) => d.l0i = i)
+  pair.allTokens = allTokens
 
-
-  var logitExtent = [-10, 0]
+  var logitExtent = [-12, 0]
 
   // var tokenCount = 50
   // var topTokens = allTokens.filter(d => d.l0i <= tokenCount || d.l1i <= tokenCount)

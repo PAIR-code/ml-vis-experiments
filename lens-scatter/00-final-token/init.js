@@ -29,12 +29,12 @@ window.init = function(){
   data.inputs = data.input_ids.map(id => ({str: util.decodeToken(id), id}))
   data.inputs.at(data.token_index).isActive = true
   sel.append('div.input-tokens')
-    .appendMany('div.token', data.inputs)
+    .appendMany('div.token', data.inputs).st({display: 'inline-block', margin: 3})
     .text(d => d.str)
     .classed('is-active', d => d.isActive)
 
 
-  var stride = 4
+  var stride = 2
   var layerPairs = d3.range(0, data.layers.length + 1 - stride, stride)
     .map(i => {
       if (!data.layers[i + stride]) return
