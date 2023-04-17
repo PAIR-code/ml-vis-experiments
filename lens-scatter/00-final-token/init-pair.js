@@ -15,12 +15,12 @@ limitations under the License.
 
 window.initPair = function(pair, sel){
 
-  var margin = {bottom: 50, left: 30, top: 20, right: 30}
+  var margin = {bottom: 30, left: 30, top: 20, right: 30}
   var totalWidth = sel.node().offsetWidth
   var width = totalWidth - margin.left - margin.right
 
   var c = d3.conventions({
-    sel: sel.append('div'),
+    sel: sel.append('div.scatter'),
     width,
     height: width,
     layers: 'scs',
@@ -50,18 +50,19 @@ window.initPair = function(pair, sel){
   _.sortBy(allTokens, d => -d.l1).forEach((d, i) => d.l1i = i)
   _.sortBy(allTokens, d => -d.l0).forEach((d, i) => d.l0i = i)
 
-  var topTokens = allTokens.filter(d => d.l0i <= pair.count || d.l1i <= pair.count)
 
+  var logitExtent = [-10, 0]
 
-  var logitExtent = d3.extent(topTokens.map(d => d.l0).concat(topTokens.map(d => d.l1)))
+  // var tokenCount = 50
+  // var topTokens = allTokens.filter(d => d.l0i <= tokenCount || d.l1i <= tokenCount)
+  // var logitExtent = d3.extent(topTokens.map(d => d.l0).concat(topTokens.map(d => d.l1)))
+  // var mag = logitExtent[1] - logitExtent[0]
+  // logitExtent = [logitExtent[0] - mag*.002, logitExtent[1] + mag*.002]
 
   var tokens = allTokens
     .filter(d => logitExtent[0] <= d.l0 && logitExtent[0] <= d.l1)
 
-  var mag = logitExtent[1] - logitExtent[0]
-  logitExtent = [logitExtent[0] - mag*.002, logitExtent[1] + mag*.002]
-
-  if (pair.isDifference) tokens = _.sortBy(allTokens, d => -d.meanV).slice(0, pair.count)
+  if (pair.isDifference) tokens = _.sortBy(allTokens, d => -d.meanV).slice(0, tokenCount)
 
   tokens.forEach(d => {
     d.isVisible = true
@@ -70,19 +71,16 @@ window.initPair = function(pair, sel){
   var maxDif = d3.max(d3.extent(tokens, d => d.dif).map(Math.abs))
   var color = colorScale = d3.scaleSequential().domain([-maxDif*1.4, maxDif*1.4]).interpolator(d3.interpolatePuOr)
 
-  // util.palette(-maxDif*.8, maxDif*.8)
-
-  if (pair.isDifference){
-    drawRotated()
-  } else{
-    drawXY()
-  }
+  pair.isDifference ? drawRotated() : drawXY()
 
   function drawXY(){
     c.x.domain(logitExtent)
     c.y.domain(logitExtent)
 
+    c.xAxis.ticks(5)
+    c.yAxis.ticks(5)
     d3.drawAxis(c)
+    util.ggPlot(c, true)
 
     var s = 2
     var scatterData = allTokens.map(d => {
@@ -110,7 +108,7 @@ window.initPair = function(pair, sel){
     scatter.draw(c, scatterData)
 
     c.svg.selectAppend('text.x-axis-label.xy-only')
-      .translate([c.width/2, c.height + 24])
+      .translate([c.width/2, c.height + 30])
       .text(pair.label0 + (pair.label0.includes(' dif') ? '' : ' →'))
       .st({fill: util.color(.8)})
       .at({textAnchor: 'middle'})
@@ -121,16 +119,6 @@ window.initPair = function(pair, sel){
       .text(pair.label1 + (pair.label0.includes(' dif') ? '' : ' →'))
       .st({fill: util.color(.2)})
       .at({textAnchor: 'middle', transform: 'rotate(-90)'})
-
-    if (pair.topLabel){
-      console.log(pair.topLabel)
-      c.svg.selectAppend('text.x-axis-label.top')
-        .translate([c.width/2, -10])
-        .text(pair.topLabel)
-        .st({fill: '#000'})
-        // .st({fill: util.color(.2)})
-        .at({textAnchor: 'middle'})
-    }
   }
 
   function drawRotated(){

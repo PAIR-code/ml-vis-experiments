@@ -34,19 +34,28 @@ window.init = function(){
     .classed('is-active', d => d.isActive)
 
 
+  var stride = 4
+  var layerPairs = d3.range(0, data.layers.length + 1 - stride, stride)
+    .map(i => {
+      if (!data.layers[i + stride]) return
+      return {
+        e0: Array.from(data.layers[i].data),
+        e1: Array.from(data.layers[i + stride].data),
+        label0: `layer ${i}`,
+        label1: `layer ${i + stride}`,
+        vocab: data.vocabStr,
+      }
+    })
+    .filter(d => d)
 
-  // Adds Scatter plots
-  var l0 = 10
-  var l1 = 20
-  var pair = {
-    e0: Array.from(data.layers[l0].data),
-    e1: Array.from(data.layers[l1].data),
-    label0: `layer ${l0}`,
-    label1: `layer ${l1}`,
-    vocab: data.vocabStr,
-  }
-  var pair = window.initPair(pair, sel.append('div'))
 
+
+  var layerSel = sel.append('div').appendMany('div.layer-pair', layerPairs)
+    .each(function(d){
+      window.initPair(d, d3.select(this).append('div'))
+    })
+
+  console.log(layerPairs)
 }
 window.init()
 

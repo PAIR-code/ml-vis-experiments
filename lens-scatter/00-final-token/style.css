@@ -1,4 +1,23 @@
 body{
-  background: #fff;
-/*  color: #fff;*/
+  background: #000;
+  color: #fff;
 }
+
+.layer-pair{
+  display: inline-block;
+  width: 300px;
+  margin: 10px;
+}
+
+.scatter{
+  font-size: 11px;
+}
+
+.scatter .axis text{
+  fill: #aaa;
+}
+.scatter .axis line{
+  stroke: #aaa;
+}
+
+
